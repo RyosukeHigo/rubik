@@ -3,7 +3,8 @@
 */
 #pragma once
 
-
+//画像座標からワールド座標へ変換する関数
+#include "pointsToWorld.h"
 
 // Define if images are to be saved.
 // '0'- no; '1'- yes.
@@ -269,8 +270,15 @@ public:
 					objInfo[1] = brect.center.x;
 					objInfo[2] = brect.center.y;
 					objInfo[3] = 90 + brect.angle; 
-					cog = brect.center;
+					//cog = brect.center;
 					roiCnt++;
+
+					double pworld[2];
+					pointsToWorld(0.0,brect.center.x,brect.center.y,pworld);
+					objInfo[1] = pworld[0];
+					objInfo[2] = pworld[1];
+					cv:Point2d pw(pworld[0], pworld[1]);
+					cog = pw;
 
 					//念のため輪郭をカウント
 					if (roiCnt == 99)

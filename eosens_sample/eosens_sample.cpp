@@ -47,8 +47,8 @@ int main()
 	const std::string destPort = "50006";
 	const std::string srcPort = "52001";
 	//画像処理
-	const unsigned int width = 608;
-	const unsigned int height = 538;
+	const unsigned int width = 800;//608;
+	const unsigned int height = 600;//538;
 
 	//スレッド間でやり取りするデータ（データやり取りの向きは一方向限定）
 	spsc_queue<sendData_t> queSend; //! dSpaceへの送信データ 画像処理->通信
