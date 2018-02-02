@@ -11,7 +11,7 @@
 #define saveImages 0
 // Define if video is to be recorded.
 // '0'- no; '1'- yes.
-#define recordVideo 1
+#define recordVideo 0
 
 // Include files to use the PYLON API.
 #include <pylon/PylonIncludes.h>
@@ -100,6 +100,8 @@ public:
 		mat1_t binImage = mat1_t::zeros(h, w);
 		mat1_t maskImage = mat1_t::zeros(h, w);
 		cv::Point2d cog;
+		cv::Point2d pw;//世界座標での重心位置
+		cv::Point2d pr;//ロボット座標系での重心位置
 		double isDetected = 0; //0:重心位置をdSpaceへ送らない，1:送る
 		cv::Rect roi = cv::Rect(0, 0, w, h); //重心計算がROI対応だが今回は全画素処理
 
@@ -267,19 +269,22 @@ public:
 					//cv::imshow("label" + std::to_string(roiCnt + 1), roi[roiCnt]);
 
 					objInfo[0] = isDetected;
-					objInfo[1] = brect.center.x;
-					objInfo[2] = brect.center.y;
+					//objInfo[1] = brect.center.x;
+					//objInfo[2] = brect.center.y;
 					objInfo[3] = 90 + brect.angle; 
-					//cog = brect.center;
+					cog = brect.center;
 					roiCnt++;
 
 					double pworld[2];
-					pointsToWorld(0.0,brect.center.x,brect.center.y,pworld);
-					objInfo[1] = pworld[0];
-					objInfo[2] = pworld[1];
-					cv:Point2d pw(pworld[0], pworld[1]);
-					cog = pw;
-
+					pointsToWorld(0.335,brect.center.x,brect.center.y,pworld);
+					//objInfo[1] = pworld[0];
+					//objInfo[2] = pworld[1];
+					pw = Point2d(pworld[0], pworld[1]);
+					double Xr = -0.176;
+					double Yr = 0.089;
+					pr = Point2d(pw.x + Xr, pw.y + Yr);
+					objInfo[1] = pr.x;
+					objInfo[2] = pr.y;
 					//念のため輪郭をカウント
 					if (roiCnt == 99)
 					{
@@ -305,6 +310,7 @@ public:
 				dispData.frameCount = fCount;
 				dispImage.copyTo(dispData.image);
 				dispData.centroid = cog;
+				dispData.worldPoints = pr;
 				queDispData_.push(dispData);
 				
 			}

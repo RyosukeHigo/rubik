@@ -14,6 +14,7 @@ struct dispData_t {
 	//mat1_t image;
 	mat3_t image;
 	cv::Point2d centroid;
+	cv::Point2d worldPoints;
 };
 
 constexpr std::size_t capacity = 3; //! spsc_queue‚ÌƒTƒCƒY

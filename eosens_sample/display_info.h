@@ -50,6 +50,7 @@ public:
 		auto startT = timeT::now();
 
 		cv::Point2d cog;
+		cv::Point2d worldPoints;
 		std::string winTitle = "";
 		long count = 0;
 
@@ -66,7 +67,7 @@ public:
 
 			frameCount = dispData.frameCount;
 			cog = dispData.centroid;
-
+			worldPoints = dispData.worldPoints;
 			//重心位置表示のため，二値化画像の場合はカラー画像へ変換
 			if (dispData.image.channels() == 1) {
 				dispData.image.copyTo(binImage);
@@ -89,11 +90,13 @@ public:
 			else if (key == 'S') {
 				isSaveImage = false;
 			}
-			if (count % 60 == 0) {
+			if (count % 1 == 0) {
 				const auto elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>(timeT::now() - startT).count() / 1000;
 				startT = timeT::now();
 				auto fps = (frameCount - prevFrameCount) * 1000.0 / elapsed_ms;
-				std::cout << std::to_string(frameCount) + "frame," + std::to_string(fps) + "[fps], COG: (" + std::to_string(cog.x) + ", " + std::to_string(cog.y) + ")" << std::endl;
+				std::cout << std::to_string(frameCount) + "frame," + std::to_string(fps)
+					+ "[fps], COG: (" + std::to_string(cog.x) + ", " + std::to_string(cog.y) + ")"
+					+ "World Point: " + std::to_string(worldPoints.x) + ", " + std::to_string(worldPoints.y) + ")" << std::endl;
 				prevFrameCount = frameCount;
 			}
 			count++;
